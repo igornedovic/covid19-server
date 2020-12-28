@@ -24,10 +24,8 @@ public class Server {
 			if(fajl.exists()) {
 				parser = new JSONParser();
 				reader = new FileReader(fajl);
-				if(reader.read() != -1) {
-					Object obj = parser.parse(reader);
-					nizIspitanika = (JSONArray) obj;
-				}
+				Object obj = parser.parse(reader);
+				nizIspitanika = (JSONArray) obj;
 			}
 			
 			while(true) {
@@ -45,7 +43,7 @@ public class Server {
 		} catch (IOException e) {
 			System.out.println("Greska prilikom pokretanja servera!");
 		} catch (ParseException e) {
-			System.out.println("Greska prilikom ucitavanja covid podataka! Fajl je prazan.");
+			System.out.println("Greska prilikom ucitavanja covid podataka!");
 
 		}
 		
