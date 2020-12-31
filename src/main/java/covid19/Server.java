@@ -9,6 +9,7 @@ import org.json.simple.parser.ParseException;
 
 public class Server {
 
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		int port = 4545;
 		ServerSocket serverSoket = null;
@@ -28,12 +29,21 @@ public class Server {
 				nizIspitanika = (JSONArray) obj;
 			}
 			
+			FileWriter fajlUpisivac = new FileWriter("covid19.txt");
+			if(nizIspitanika.isEmpty()) {
+				JSONObject podaciAdmin = new JSONObject();
+				JSONObject podaciCovidAdmin = new JSONObject();
+				podaciAdmin.put("Password", "admin");
+				podaciCovidAdmin.put("admin", podaciAdmin);
+				nizIspitanika.add(podaciCovidAdmin);
+				fajlUpisivac.write(nizIspitanika.toJSONString());
+				fajlUpisivac.flush();
+			}
+			
 			while(true) {
 				System.out.println("Cekam na konekciju...");
 				soketZaKomunikaciju = serverSoket.accept();
 				System.out.println("Doslo je do konekcije!");
-				FileWriter fajlUpisivac = new FileWriter("covid19.txt");
-				
 				ClientHandler klijent = new ClientHandler(soketZaKomunikaciju, fajlUpisivac, nizIspitanika);
 				klijent.start();
 			}

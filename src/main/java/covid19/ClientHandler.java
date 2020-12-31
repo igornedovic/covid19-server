@@ -40,62 +40,23 @@ public class ClientHandler extends Thread {
 				korisnickiMeni();
 				
 				input = klijentInput.readLine();
+				
+				if(!input.equals("1") && !input.equals("2") && !input.equals("3")) {
+					klijentOutput.println("Nepostojeca opcija, pokusajte ponovo.");
+					klijentOutput.println();
+				}
 
-			} while (input.startsWith("GRESKA"));
+			} while (!input.equals("1") && !input.equals("2") && !input.equals("3"));
 			
 			
 			if(input.equals("1")) {
-				if(nizIspitanika.isEmpty()) {
-					klijentOutput.println("Unesite username: ");
-					String username = klijentInput.readLine();
+					if(registracija()) {
+						klijentOutput.println("Uspesno ste se registrovali. Sada se mozete prijaviti na sistem.");
+						/*klijentOutput.println();*/
 					
-					klijentOutput.println("Unesite password: ");
-					String password = klijentInput.readLine();
-					podaciIspitanik.put("Password", password);
-					
-					klijentOutput.println("Unesite Vase ime: ");
-					String ime = klijentInput.readLine();
-					while(ime.matches("[0-9]+") && ime.length()<2) {
-						klijentOutput.println("Uneli ste neispravno ime, pokusajte ponovo");
-						klijentOutput.println("Unesite Vase ime: ");
-						ime = klijentInput.readLine();
-					}
-					podaciIspitanik.put("Ime", ime);
-			
-					
-					klijentOutput.println("Unesite Vase prezime: ");
-					String prezime = klijentInput.readLine();
-					while(prezime.matches("[0-9]+") && prezime.length()<2) {
-						klijentOutput.println("Uneli ste neispravno prezime, pokusajte ponovo");
-						klijentOutput.println("Unesite Vase prezime: ");
-						prezime = klijentInput.readLine();
-					}
-					podaciIspitanik.put("Prezime", prezime);
-					
-					klijentOutput.println("Unesite Vas pol(M/Z): ");
-					String pol = (klijentInput.readLine()).toUpperCase();
-					while(!(pol.equals("M")) && !(pol.equals("Z"))) {
-						klijentOutput.println("Uneli ste neispravnu oznaku pola, pokusajte ponovo");
-						klijentOutput.println("Unesite Vase pol: ");
-						pol = klijentInput.readLine();
-					}
-					podaciIspitanik.put("Pol", pol);
-					
-					klijentOutput.println("Unesite Vas email: ");
-					String email = klijentInput.readLine();
-					while(!(email.contains("@")) || !(email.contains("."))) {
-						klijentOutput.println("Uneli ste neispravan email, pokusajte ponovo");
-						klijentOutput.println("Unesite Vase email: ");
-						email = klijentInput.readLine();
-					}
-					podaciIspitanik.put("Email", email);
-					
-					podaciCovid.put(username, podaciIspitanik);
-					nizIspitanika.add(podaciCovid);
-					
-					fajlUpisivac.write(nizIspitanika.toJSONString());
-					fajlUpisivac.flush();
 				}
+				
+				
 			}
 			
 		
@@ -116,6 +77,61 @@ public class ClientHandler extends Thread {
 		klijentOutput.println("3. Izlaz");
 		klijentOutput.println("Vas izbor:");
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public boolean registracija() throws IOException {
+		klijentOutput.println("Unesite username: ");
+		String username = klijentInput.readLine();
+		
+		klijentOutput.println("Unesite password: ");
+		String password = klijentInput.readLine();
+		podaciIspitanik.put("Password", password);
+		
+		klijentOutput.println("Unesite Vase ime: ");
+		String ime = klijentInput.readLine();
+		while(ime.equals("") || !ime.matches("^[a-zA-Z]*$") || ime.length()<1) {
+			klijentOutput.println("Uneli ste neispravno ime, pokusajte ponovo");
+			klijentOutput.println("Unesite Vase ime: ");
+			ime = klijentInput.readLine();
+		}
+		podaciIspitanik.put("Ime", ime);
+
+		
+		klijentOutput.println("Unesite Vase prezime: ");
+		String prezime = klijentInput.readLine();
+		while(prezime.equals("") || !prezime.matches("^[a-zA-Z]*$") || prezime.length()<1) {
+			klijentOutput.println("Uneli ste neispravno prezime, pokusajte ponovo");
+			klijentOutput.println("Unesite Vase prezime: ");
+			prezime = klijentInput.readLine();
+		}
+		podaciIspitanik.put("Prezime", prezime);
+		
+		klijentOutput.println("Unesite Vas pol(M/Z): ");
+		String pol = (klijentInput.readLine()).toUpperCase();
+		while(!(pol.equals("M")) && !(pol.equals("Z"))) {
+			klijentOutput.println("Uneli ste neispravnu oznaku pola, pokusajte ponovo");
+			klijentOutput.println("Unesite Vase pol: ");
+			pol = klijentInput.readLine();
+		}
+		podaciIspitanik.put("Pol", pol);
+		
+		klijentOutput.println("Unesite Vas email: ");
+		String email = klijentInput.readLine();
+		while(!(email.contains("@")) || !(email.contains("."))) {
+			klijentOutput.println("Uneli ste neispravan email, pokusajte ponovo");
+			klijentOutput.println("Unesite Vase email: ");
+			email = klijentInput.readLine();
+		}
+		podaciIspitanik.put("Email", email);
+		
+		podaciCovid.put(username, podaciIspitanik);
+		nizIspitanika.add(podaciCovid);
+		
+		fajlUpisivac.write(nizIspitanika.toJSONString());
+		fajlUpisivac.flush();
+		
+		return true;
 	}
 
 }
