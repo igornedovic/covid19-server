@@ -1,1 +1,17 @@
-[{"admin":{"Password":"admin"}},{"Mr_igi":{"Ime":"Igor","Email":"igornedovic@gmail.com","Prezime":"Nedovic","Pol":"M","Password":"kruskica"}},{"Miro":{"Ime":"Mirko","Email":"mirkonikic@gmail.com","Prezime":"Nikic","Pol":"M","Password":"Nik"}},{"TKKK":{"Ime":"Mica","Email":"mz@gmail.com","Prezime":"Zikic","Pol":"M","Password":"ZKK"}}]
+[
+  {
+    "admin": {
+      "Broj ispitanika": 1,
+      "Password": "admin"
+    }
+  },
+  {
+    "Mr_Igi": {
+      "Ime": "Igor",
+      "Email": "igornedovic@gmail.com",
+      "Prezime": "Nedovic",
+      "Pol": "M",
+      "Password": "kruskica"
+    }
+  }
+]

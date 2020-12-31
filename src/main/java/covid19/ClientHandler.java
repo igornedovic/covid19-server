@@ -4,6 +4,9 @@ import java.io.*;
 import java.net.*;
 import org.json.simple.*;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 public class ClientHandler extends Thread {
 	
 	Socket soketZaKomunikaciju;
@@ -14,7 +17,8 @@ public class ClientHandler extends Thread {
 	PrintStream klijentOutput;
 	JSONObject podaciIspitanik;
 	JSONObject podaciCovid;
-	
+	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
 	
 	public ClientHandler(Socket soketZaKomunikaciju, FileWriter fajlUpisivac, JSONArray nizIspitanika) {
 		this.soketZaKomunikaciju = soketZaKomunikaciju;
@@ -32,6 +36,7 @@ public class ClientHandler extends Thread {
 			klijentOutput = new PrintStream(soketZaKomunikaciju.getOutputStream());
 			podaciIspitanik = new JSONObject();
 			podaciCovid = new JSONObject();
+
 			
 			String input;
 			
@@ -52,8 +57,11 @@ public class ClientHandler extends Thread {
 			if(input.equals("1")) {
 					if(registracija()) {
 						klijentOutput.println("Uspesno ste se registrovali. Sada se mozete prijaviti na sistem.");
-						/*klijentOutput.println();*/
-					
+						
+						Server.podaciAdmin.put("Broj ispitanika", 1);
+						fajlUpisivac.write(gson.toJson(nizIspitanika));
+						fajlUpisivac.flush();
+						
 				}
 				
 				
@@ -65,7 +73,13 @@ public class ClientHandler extends Thread {
 		} catch (IOException e) {
 			// ovde je pokriveno ako klijent nije napisao ***quit ali je stisnuo iksic,
 			// terminate, nestalo struje
-			e.printStackTrace();
+			System.out.println("Klijent je iznenada napustio sistem.");
+			try {
+				fajlUpisivac.write(gson.toJson(nizIspitanika));
+				fajlUpisivac.flush();
+			} catch (IOException e1) {
+				System.out.println("Greska prilikom upisivanja u bazu ispitanika.");
+			}
 		}
 		
 	}
@@ -127,9 +141,6 @@ public class ClientHandler extends Thread {
 		
 		podaciCovid.put(username, podaciIspitanik);
 		nizIspitanika.add(podaciCovid);
-		
-		fajlUpisivac.write(nizIspitanika.toJSONString());
-		fajlUpisivac.flush();
 		
 		return true;
 	}
