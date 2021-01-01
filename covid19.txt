@@ -1,7 +1,6 @@
 [
   {
     "admin": {
-      "Broj ispitanika": 1,
       "Password": "admin"
     }
   },
@@ -11,7 +10,28 @@
       "Email": "igornedovic@gmail.com",
       "Prezime": "Nedovic",
       "Pol": "M",
+      "Test samoprocene": {
+        "Status brzog testa": "POZITIVAN",
+        "Datum brzog testa": "1-1-2021 18:3:21",
+        "Potvrdni odgovori": 6,
+        "Odricni odgovori": 1
+      },
       "Password": "kruskica"
+    }
+  },
+  {
+    "MireN": {
+      "Ime": "Mirko",
+      "Email": "mirkonikic@gmail.com",
+      "Prezime": "Nikic",
+      "Pol": "M",
+      "Test samoprocene": {
+        "Status brzog testa": "NEGATIVAN",
+        "Datum brzog testa": "1-1-2021 18:6:58",
+        "Potvrdni odgovori": 3,
+        "Odricni odgovori": 4
+      },
+      "Password": "mire"
     }
   }
 ]
