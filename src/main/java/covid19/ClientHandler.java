@@ -2,6 +2,7 @@ package covid19;
 
 import java.io.*;
 import java.net.*;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -44,40 +45,37 @@ public class ClientHandler extends Thread {
 			podaciIspitanik = new JSONObject();
 			podaciCovid = new JSONObject();
 
-			
 			String input;
-			
+
 			do {
-				
+
 				korisnickiMeni();
-				
+
 				input = klijentInput.readLine();
-				
-				if(!input.equals("1") && !input.equals("2") && !input.equals("3")) {
+
+				if (!input.equals("1") && !input.equals("2") && !input.equals("3")) {
 					klijentOutput.println("Nepostojeca opcija, pokusajte ponovo.");
 					klijentOutput.println();
 				}
 
 			} while (!input.equals("1") && !input.equals("2") && !input.equals("3"));
-			
-			
-			if(input.equals("1")) {
-				if(registracija()) {
-			
-						klijentOutput.println("Uspesno ste se registrovali. Sada se mozete prijaviti na sistem.");
-						klijentOutput.println();
-						
-						input = "2";
+
+			if (input.equals("1")) {
+				if (registracija()) {
+
+					klijentOutput.println("Uspesno ste se registrovali. Sada se mozete prijaviti na sistem.");
+					klijentOutput.println();
+
+					input = "2";
 				}
-					
+
 			}
-			
-			
-			if(input.equals("2")) {
-				
+
+			if (input.equals("2")) {
+
 				boolean validacija = false;
 				while (!validacija) {
-					
+
 					klijentOutput.println("Username:");
 					username = klijentInput.readLine();
 
@@ -87,11 +85,18 @@ public class ClientHandler extends Thread {
 					for (Object korisnik : nizIspitanika) {
 						podaciCovid = (JSONObject) korisnik;
 
-						if (podaciCovid.get(username) != null) {
-
+						if (podaciCovid.get(username) != null) {							
 							podaciIspitanik = (JSONObject) podaciCovid.get(username);
+							
+							if((podaciCovid.get(username) == podaciCovid.get("admin")) && password.equals("admin")) {
+								adminPanel();
+								validacija = true;
+								break;
+							}
+							
 							if (!password.equals(podaciIspitanik.get("Password"))) {
 								klijentOutput.println("Pogresan password. Pokusajte ponovo");
+								break;
 							} else {
 								validacija = true;
 
@@ -104,46 +109,49 @@ public class ClientHandler extends Thread {
 									String unos = klijentInput.readLine();
 
 									if (unos.equals("1")) {
-										
-										JSONObject podaciTestSamoprocene = (JSONObject) podaciIspitanik.get("Test samoprocene"); 
-										if(podaciTestSamoprocene != null) {
+
+										JSONObject podaciTestSamoprocene = (JSONObject) podaciIspitanik
+												.get("Test samoprocene");
+										if (podaciTestSamoprocene != null) {
 											long vremeSada = izracunajMilisekunde(zapisDatuma(new GregorianCalendar()));
-											long vremeTesta = izracunajMilisekunde((String)podaciTestSamoprocene.get("Datum brzog testa"));
+											long vremeTesta = izracunajMilisekunde(
+													(String) podaciTestSamoprocene.get("Datum brzog testa"));
 											if ((vremeSada - vremeTesta) > TimeUnit.HOURS.toMillis(24)) {
-												
+
 												testSamoprocene();
-									
+
 											} else {
 												klijentOutput.println(
 														"Vec ste testirali. Potrebno je sacekati 24h da biste uradili novi test."
-														+ " Mozete pregledati rezultate prethodnog testa.");
+																+ " Mozete pregledati rezultate prethodnog testa.");
 												continue;
 											}
-										} else if(podaciIspitanik.get("Test samoprocene-nadzor") != null ) {
-											podaciTestSamoprocene = (JSONObject)podaciIspitanik.get("Test samoprocene-nadzor");
+										} else if (podaciIspitanik.get("Test samoprocene-nadzor") != null) {
+											podaciTestSamoprocene = (JSONObject) podaciIspitanik
+													.get("Test samoprocene-nadzor");
 											long vremeSada = izracunajMilisekunde(zapisDatuma(new GregorianCalendar()));
-											long vremeTesta = izracunajMilisekunde((String)podaciTestSamoprocene.get("Datum testa samoprocene"));
+											long vremeTesta = izracunajMilisekunde(
+													(String) podaciTestSamoprocene.get("Datum testa samoprocene"));
 											if ((vremeSada - vremeTesta) > TimeUnit.HOURS.toMillis(24)) {
-												
+
 												testSamoprocene();
-												
+
 											} else {
-												
+
 												klijentOutput.println(
 														"Vec ste testirali. Potrebno je sacekati 24h da biste uradili novi test."
-														+ " Mozete pregledati rezultate prethodnog testa.");
+																+ " Mozete pregledati rezultate prethodnog testa.");
 												continue;
 											}
-											
+
 										} else {
-											
+
 											testSamoprocene();
-											
+
 										}
-										
+
 										klijentOutput.println("Mozete izvrsiti uvid u rezultate testa.");
-						
-										
+
 									} else if (unos.equals("2")) {
 										JSONObject podaciTestSamoprocene = (JSONObject) podaciIspitanik
 												.get("Test samoprocene");
@@ -159,20 +167,23 @@ public class ClientHandler extends Thread {
 													.println("---------------------------------------------------");
 											test = false;
 										}
-										
-										podaciTestSamoprocene = (JSONObject) podaciIspitanik.get("Test samoprocene-nadzor");
-										if(podaciTestSamoprocene != null) {
+
+										podaciTestSamoprocene = (JSONObject) podaciIspitanik
+												.get("Test samoprocene-nadzor");
+										if (podaciTestSamoprocene != null) {
 											klijentOutput
-											.println("---------------------------------------------------");
-											klijentOutput.println("Datum testa samoprocene: " + podaciTestSamoprocene.get("Datum testa samoprocene"));
+													.println("---------------------------------------------------");
+											klijentOutput.println("Datum testa samoprocene: "
+													+ podaciTestSamoprocene.get("Datum testa samoprocene"));
 											klijentOutput.println("Status: " + podaciTestSamoprocene.get("Status"));
 											klijentOutput
-											.println("---------------------------------------------------");
+													.println("---------------------------------------------------");
 											test = false;
 										}
-										
-										if(test == true) {
-											klijentOutput.println("U bazi ne postoje rezultati sa Vasim kredencijalima. Pristupite testu samoprocene.");
+
+										if (test == true) {
+											klijentOutput.println(
+													"U bazi ne postoje rezultati sa Vasim kredencijalima. Pristupite testu samoprocene.");
 										}
 									} else {
 										klijentOutput.println("Pogresan unos, pokusajte ponovo.");
@@ -184,13 +195,13 @@ public class ClientHandler extends Thread {
 						}
 
 					}
-					
+
 					if (podaciCovid.get(username) == null) {
 						klijentOutput.println("Uneli ste nepostojeci username! Pokusajte ponovo.");
 					}
 				}
 			}
-			
+
 			fajlUpisivac = new FileWriter("covid19.txt");
 			fajlUpisivac.write(gson.toJson(nizIspitanika));
 			fajlUpisivac.flush();
@@ -224,6 +235,14 @@ public class ClientHandler extends Thread {
 	public boolean registracija() throws IOException {
 		klijentOutput.println("Unesite username: ");
 		username = klijentInput.readLine();
+
+		for(Object korisnik : nizIspitanika) {
+			podaciCovid = (JSONObject) korisnik;
+			if(podaciCovid.get(username) != null) {
+				klijentOutput.println("Vec postoji registrovani korisnik sa datim korisnickim imenom! Unesite drugaciji username.");
+				return false;
+			}	
+		}		
 		
 		klijentOutput.println("Unesite password: ");
 		String password = klijentInput.readLine();
@@ -276,73 +295,73 @@ public class ClientHandler extends Thread {
 	
 	@SuppressWarnings("unchecked")
 	public void testSamoprocene() throws IOException {
-		
+
 		klijentOutput.println();
 		klijentOutput.println("---------------------------------------------------------------");
 		klijentOutput.println("Dobrodosli na test samoprocene. Postavicemo vam kratka pitanja:");
 		klijentOutput.println();
 
 		String odgovor = "";
-		
+
 		klijentOutput.println("Da li ste putovali van Srbije u okviru 14 dana pre početka simptoma? (da/ne):");
 		odgovor += klijentInput.readLine() + "_";
-		
+
 		klijentOutput.println("Da li ste bili u kontaku sa zaraženim osobama? (da/ne):");
 		odgovor += klijentInput.readLine() + "_";
-		
+
 		klijentOutput.println("Šta imate od simptoma (da/ne):");
 		klijentOutput.println("Povišena temperatura");
 		odgovor += klijentInput.readLine() + "_";
 
 		klijentOutput.println("Kasalj");
 		odgovor += klijentInput.readLine() + "_";
-		
+
 		klijentOutput.println("Opsta slabost");
 		odgovor += klijentInput.readLine() + "_";
 
 		klijentOutput.println("Gubitak cula mirisa");
 		odgovor += klijentInput.readLine() + "_";
-		
+
 		klijentOutput.println("Gubitak/promena cula ukusa");
 		odgovor += klijentInput.readLine() + "_";
-		
+
 		GregorianCalendar datum = new GregorianCalendar();
 		int brojacDa = 0;
 		int brojacPitanja = 0;
-		String [] odgovori = odgovor.split("_");
+		String[] odgovori = odgovor.split("_");
 		for (String rezultat : odgovori) {
-			if(rezultat.toLowerCase().equals("da")) {
+			if (rezultat.toLowerCase().equals("da")) {
 				brojacDa++;
 			}
 			brojacPitanja++;
 		}
-		
-		
+
 		Server.podaciAdmin.put("Broj testiranja", ((Long) Server.podaciAdmin.get("Broj testiranja") + 1));
-		
-		if(brojacDa >= 2) {
+
+		if (brojacDa >= 2) {
 			String brziTestStatus = (new Random().nextBoolean()) ? "POZITIVAN" : "NEGATIVAN";
-			
-			if(brziTestStatus.equals("POZITIVAN")) {
-				Server.podaciAdmin.put("Broj pozitivnih testova", ((Long) Server.podaciAdmin.get("Broj pozitivnih testova") + 1));
+
+			if (brziTestStatus.equals("POZITIVAN")) {
+				Server.podaciAdmin.put("Broj pozitivnih testova",
+						((Long) Server.podaciAdmin.get("Broj pozitivnih testova") + 1));
 			} else {
-				Server.podaciAdmin.put("Broj negativnih testova", ((Long) Server.podaciAdmin.get("Broj negativnih testova") + 1));
+				Server.podaciAdmin.put("Broj negativnih testova",
+						((Long) Server.podaciAdmin.get("Broj negativnih testova") + 1));
 			}
-			
+
 			JSONObject brziTest = new JSONObject();
 			brziTest.put("Potvrdni odgovori", brojacDa);
 			brziTest.put("Odricni odgovori", brojacPitanja - brojacDa);
 			brziTest.put("Status brzog testa", brziTestStatus);
 			brziTest.put("Datum brzog testa", zapisDatuma(datum));
 			podaciIspitanik.put("Test samoprocene", brziTest);
-			
+
 			klijentOutput.println();
-			klijentOutput.println("---------------------------------------------------------------");
-			klijentOutput.println("Rezultat brzog testa: " + brziTestStatus);	
-			klijentOutput.println();
-			
+			klijentOutput.println("Rezultat brzog testa: " + brziTestStatus);
+
 		} else {
-			Server.podaciAdmin.put("Broj ispitanika pod nadzorom", ((Long) Server.podaciAdmin.get("Broj ispitanika pod nadzorom") + 1));
+			Server.podaciAdmin.put("Broj ispitanika pod nadzorom",
+					((Long) Server.podaciAdmin.get("Broj ispitanika pod nadzorom") + 1));
 
 			JSONObject testNadzor = new JSONObject();
 			testNadzor.put("Status", "Pod nadzorom");
@@ -352,8 +371,7 @@ public class ClientHandler extends Thread {
 			klijentOutput.println();
 
 		}
-		
-	
+
 	}
 	
 	public String zapisDatuma(GregorianCalendar datum) {
@@ -377,6 +395,9 @@ public class ClientHandler extends Thread {
 		return milisekunde;
 	}
 
+	private void adminPanel() {
+		
+	}
 }
 
 
