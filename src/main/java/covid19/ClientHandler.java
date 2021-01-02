@@ -2,11 +2,13 @@ package covid19;
 
 import java.io.*;
 import java.net.*;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.simple.*;
 
 import com.google.gson.Gson;
@@ -102,14 +104,46 @@ public class ClientHandler extends Thread {
 									String unos = klijentInput.readLine();
 
 									if (unos.equals("1")) {
-										/*long vremeSada = izracunajMilisekunde(new GregorianCalendar());
-										long vremeTesta = izracunajMilisekunde(testSamoprocene());
-										if ((vremeSada - vremeTesta) > TimeUnit.HOURS.toMillis(24)) {
-											testSamoprocene();
+										
+										JSONObject podaciTestSamoprocene = (JSONObject) podaciIspitanik.get("Test samoprocene"); 
+										if(podaciTestSamoprocene != null) {
+											long vremeSada = izracunajMilisekunde(zapisDatuma(new GregorianCalendar()));
+											long vremeTesta = izracunajMilisekunde((String)podaciTestSamoprocene.get("Datum brzog testa"));
+											if ((vremeSada - vremeTesta) > TimeUnit.HOURS.toMillis(24)) {
+												
+												testSamoprocene();
+									
+											} else {
+												klijentOutput.println(
+														"Vec ste testirali. Potrebno je sacekati 24h da biste uradili novi test."
+														+ " Mozete pregledati rezultate prethodnog testa.");
+												continue;
+											}
+										} else if(podaciIspitanik.get("Test samoprocene-nadzor") != null ) {
+											podaciTestSamoprocene = (JSONObject)podaciIspitanik.get("Test samoprocene-nadzor");
+											long vremeSada = izracunajMilisekunde(zapisDatuma(new GregorianCalendar()));
+											long vremeTesta = izracunajMilisekunde((String)podaciTestSamoprocene.get("Datum testa samoprocene"));
+											if ((vremeSada - vremeTesta) > TimeUnit.HOURS.toMillis(24)) {
+												
+												testSamoprocene();
+												
+											} else {
+												
+												klijentOutput.println(
+														"Vec ste testirali. Potrebno je sacekati 24h da biste uradili novi test."
+														+ " Mozete pregledati rezultate prethodnog testa.");
+												continue;
+											}
+											
 										} else {
-											klijentOutput.println("Vec ste testirali. Potrebno je sacekati 24h da biste uradili novi test.");
+											
+											testSamoprocene();
+											
 										}
-										test = false;*/
+										
+										klijentOutput.println("Mozete izvrsiti uvid u rezultate testa.");
+						
+										
 									} else if (unos.equals("2")) {
 										JSONObject podaciTestSamoprocene = (JSONObject) podaciIspitanik
 												.get("Test samoprocene");
@@ -125,6 +159,21 @@ public class ClientHandler extends Thread {
 													.println("---------------------------------------------------");
 											test = false;
 										}
+										
+										podaciTestSamoprocene = (JSONObject) podaciIspitanik.get("Test samoprocene-nadzor");
+										if(podaciTestSamoprocene != null) {
+											klijentOutput
+											.println("---------------------------------------------------");
+											klijentOutput.println("Datum testa samoprocene: " + podaciTestSamoprocene.get("Datum testa samoprocene"));
+											klijentOutput.println("Status: " + podaciTestSamoprocene.get("Status"));
+											klijentOutput
+											.println("---------------------------------------------------");
+											test = false;
+										}
+										
+										if(test == true) {
+											klijentOutput.println("U bazi ne postoje rezultati sa Vasim kredencijalima. Pristupite testu samoprocene.");
+										}
 									} else {
 										klijentOutput.println("Pogresan unos, pokusajte ponovo.");
 									}
@@ -136,7 +185,9 @@ public class ClientHandler extends Thread {
 
 					}
 					
-					klijentOutput.println("Uneli ste nepostojeci username! Pokusajte ponovo.");
+					if (podaciCovid.get(username) == null) {
+						klijentOutput.println("Uneli ste nepostojeci username! Pokusajte ponovo.");
+					}
 				}
 			}
 			
@@ -156,7 +207,7 @@ public class ClientHandler extends Thread {
 			} catch (IOException e1) {
 				System.out.println("Greska prilikom upisivanja u bazu ispitanika.");
 			}
-		}
+		} 
 		
 	}
 	
@@ -266,29 +317,46 @@ public class ClientHandler extends Thread {
 			brojacPitanja++;
 		}
 		
+		
+		Server.podaciAdmin.put("Broj testiranja", ((Long) Server.podaciAdmin.get("Broj testiranja") + 1));
+		
 		if(brojacDa >= 2) {
 			String brziTestStatus = (new Random().nextBoolean()) ? "POZITIVAN" : "NEGATIVAN";
+			
+			if(brziTestStatus.equals("POZITIVAN")) {
+				Server.podaciAdmin.put("Broj pozitivnih testova", ((Long) Server.podaciAdmin.get("Broj pozitivnih testova") + 1));
+			} else {
+				Server.podaciAdmin.put("Broj negativnih testova", ((Long) Server.podaciAdmin.get("Broj negativnih testova") + 1));
+			}
 			
 			JSONObject brziTest = new JSONObject();
 			brziTest.put("Potvrdni odgovori", brojacDa);
 			brziTest.put("Odricni odgovori", brojacPitanja - brojacDa);
 			brziTest.put("Status brzog testa", brziTestStatus);
-			brziTest.put("Datum brzog testa", datumBrzogTesta(datum));
+			brziTest.put("Datum brzog testa", zapisDatuma(datum));
 			podaciIspitanik.put("Test samoprocene", brziTest);
 			
 			klijentOutput.println();
 			klijentOutput.println("---------------------------------------------------------------");
 			klijentOutput.println("Rezultat brzog testa: " + brziTestStatus);	
+			klijentOutput.println();
 			
 		} else {
-			podaciIspitanik.put("Test samoprocene-nadzor", "Status pracenja(Pod nadzorom)");
+			Server.podaciAdmin.put("Broj ispitanika pod nadzorom", ((Long) Server.podaciAdmin.get("Broj ispitanika pod nadzorom") + 1));
+
+			JSONObject testNadzor = new JSONObject();
+			testNadzor.put("Status", "Pod nadzorom");
+			testNadzor.put("Datum testa samoprocene", zapisDatuma(datum));
+			podaciIspitanik.put("Test samoprocene-nadzor", testNadzor);
 			klijentOutput.println("Pod nadzorom ste. Potrebno je da ponovite test samoprocene u roku od 20 dana.");
+			klijentOutput.println();
+
 		}
 		
 	
 	}
 	
-	public String datumBrzogTesta(GregorianCalendar datum) {
+	public String zapisDatuma(GregorianCalendar datum) {
 		
 		int godina = datum.get(GregorianCalendar.YEAR);
 		int mesec = datum.get(GregorianCalendar.MONTH);
@@ -298,17 +366,15 @@ public class ClientHandler extends Thread {
 		int sekund = datum.get(GregorianCalendar.SECOND);
 		
 		
-		return (dan+"-"+(mesec+1)+"-"+godina+" "+sat+":"+minut+":"+sekund);
+		return (dan+"/"+(mesec+1)+"/"+godina+" "+sat+":"+minut+":"+sekund);
 	}
 	
-	public long izracunajMilisekunde(GregorianCalendar datum) {
-		
-		int sat = datum.get(GregorianCalendar.HOUR_OF_DAY);
-		int minut = datum.get(GregorianCalendar.MINUTE);
-		int sekund = datum.get(GregorianCalendar.SECOND);
-		int milisekund = datum.get(GregorianCalendar.MILLISECOND);
-		
-		return (sat * minut * sekund * milisekund);
+	public long izracunajMilisekunde(String datum)  {	
+	
+		DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+		DateTime parsiranDatum = DateTime.parse(datum, formatter);
+		long milisekunde = parsiranDatum.getMillis();
+		return milisekunde;
 	}
 
 }

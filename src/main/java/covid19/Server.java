@@ -11,8 +11,8 @@ import org.json.simple.parser.ParseException;
 
 public class Server {
 
-	public static JSONObject podaciAdmin = new JSONObject();
-	public static JSONObject podaciCovidAdmin = new JSONObject();
+	public static JSONObject podaciAdmin = null;
+	public static JSONObject podaciCovidAdmin = null;
 	 
 
 	
@@ -24,7 +24,6 @@ public class Server {
 		JSONArray nizIspitanika = new JSONArray();
 		JSONParser parser = null;
 		FileReader reader = null;
-		FileWriter fajlUpisivac = null;
 
 		
 		try {
@@ -41,8 +40,15 @@ public class Server {
 				
 			if(nizIspitanika.isEmpty()) {
 				podaciAdmin.put("Password", "admin");
+				podaciAdmin.put("Broj testiranja", 0);
+				podaciAdmin.put("Broj pozitivnih testova", 0);
+				podaciAdmin.put("Broj negativnih testova", 0);
+				podaciAdmin.put("Broj ispitanika pod nadzorom", 0);
 				podaciCovidAdmin.put("admin", podaciAdmin);
 				nizIspitanika.add(podaciCovidAdmin);
+			} else {
+				podaciCovidAdmin = (JSONObject) nizIspitanika.get(0);
+				podaciAdmin = (JSONObject) podaciCovidAdmin.get("admin");
 			}
 			
 			
