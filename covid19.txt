@@ -1,14 +1,18 @@
 [
   {
-    "admin": {
-      "Broj pozitivnih testova": 2,
-      "Broj ispitanika pod nadzorom": 1,
-      "Broj negativnih testova": 2,
-      "Password": "admin",
-      "Broj testiranja": 5
-    }
-  },
-  {
+    "MireN": {
+      "Ime": "Mirko",
+      "Email": "mirkonikic@gmail.com",
+      "Prezime": "Nikic",
+      "Pol": "M",
+      "Test samoprocene": {
+        "Datum PCR testa": "4/1/2021 20:33:56",
+        "Status PCR testa": "NEGATIVAN",
+        "Odricni odgovori na testu samoprocene": 4,
+        "Potvrdni odgovori na testu samoprocene": 3
+      },
+      "Password": "mire"
+    },
     "Mr_Igi": {
       "Ime": "Igor",
       "Email": "igornedovic@gmail.com",
@@ -16,149 +20,55 @@
       "Pol": "M",
       "Test samoprocene": {
         "Status brzog testa": "POZITIVAN",
-        "Datum brzog testa": "2/1/2021 12:53:28",
-        "Potvrdni odgovori": 5,
-        "Odricni odgovori": 2
+        "Odricni odgovori na testu samoprocene": 2,
+        "Datum brzog testa": "4/1/2021 20:32:6",
+        "Potvrdni odgovori na testu samoprocene": 5
       },
       "Password": "kruskica"
-    }
-  },
-  {
-    "MireN": {
-      "Ime": "Mirko",
-      "Email": "mirkonikic@gmail.com",
+    },
+    "Roko": {
+      "Ime": "Uros",
+      "Email": "rokoleni@gmail.com",
       "Test samoprocene-nadzor": {
         "Status": "Pod nadzorom",
-        "Datum testa samoprocene": "2/1/2021 12:55:9"
+        "Datum testa samoprocene": "4/1/2021 21:41:49"
       },
-      "Prezime": "Nikic",
+      "Prezime": "Tasic",
       "Pol": "M",
-      "Password": "mire"
-    }
-  },
-  {
-    "Ceca": {
-      "Ime": "Svetlana",
-      "Email": "cecaStajkic@yahoo.com",
-      "Prezime": "Stajkic",
-      "Pol": "Z",
-      "Test samoprocene": {
-        "Status brzog testa": "NEGATIVAN",
-        "Datum brzog testa": "2/1/2021 13:20:33",
-        "Potvrdni odgovori": 6,
-        "Odricni odgovori": 1
-      },
-      "Password": "1312"
-    }
-  },
-  {
-    "ZvonkoB12": {
+      "Password": "Leni"
+    },
+    "Zvonko": {
       "Ime": "Zvonko",
-      "Email": "zvonko@gmail.com",
-      "Prezime": "Simic",
+      "Email": "zb@gmail.com",
+      "Prezime": "Bogdan",
       "Pol": "M",
       "Test samoprocene": {
-        "Status brzog testa": "POZITIVAN",
-        "Datum brzog testa": "2/1/2021 15:29:55",
-        "Potvrdni odgovori": 5,
-        "Odricni odgovori": 2
+        "Datum PCR testa": "4/1/2021 21:39:44",
+        "Status PCR testa": "POZITIVAN",
+        "Odricni odgovori na testu samoprocene": 2,
+        "Potvrdni odgovori na testu samoprocene": 5
       },
-      "Password": "Subota13"
+      "Password": "B13"
+    },
+    "admin": {
+      "Broj pozitivnih testova": 3,
+      "Broj ispitanika pod nadzorom": 1,
+      "Broj negativnih testova": 2,
+      "Password": "admin",
+      "Broj testiranja": 5
     },
     "Ceca": {
       "Ime": "Svetlana",
-      "Email": "cecaStajkic@yahoo.com",
-      "Prezime": "Stajkic",
-      "Pol": "Z",
-      "Test samoprocene": {
-        "Status brzog testa": "NEGATIVAN",
-        "Datum brzog testa": "2/1/2021 13:20:33",
-        "Potvrdni odgovori": 6,
-        "Odricni odgovori": 1
-      },
-      "Password": "1312"
-    }
-  },
-  {
-    "Zoki": {
-      "Ime": "Zoran",
-      "Email": "zoranusk@gmail.com",
-      "Prezime": "Uskokovi",
-      "Pol": "M",
-      "Test samoprocene": {
-        "Status brzog testa": "NEGATIVAN",
-        "Datum brzog testa": "2/1/2021 20:44:57",
-        "Potvrdni odgovori": 5,
-        "Odricni odgovori": 2
-      },
-      "Password": "Torlak"
-    },
-    "ZvonkoB12": {
-      "Ime": "Zvonko",
-      "Email": "zvonko@gmail.com",
+      "Email": "ceca115@yahoo.com",
       "Prezime": "Simic",
-      "Pol": "M",
-      "Test samoprocene": {
-        "Status brzog testa": "POZITIVAN",
-        "Datum brzog testa": "2/1/2021 15:29:55",
-        "Potvrdni odgovori": 5,
-        "Odricni odgovori": 2
-      },
-      "Password": "Subota13"
-    },
-    "Ceca": {
-      "Ime": "Svetlana",
-      "Email": "cecaStajkic@yahoo.com",
-      "Prezime": "Stajkic",
       "Pol": "Z",
       "Test samoprocene": {
-        "Status brzog testa": "NEGATIVAN",
-        "Datum brzog testa": "2/1/2021 13:20:33",
-        "Potvrdni odgovori": 6,
-        "Odricni odgovori": 1
+        "Datum PCR testa": "4/1/2021 20:35:40",
+        "Status PCR testa": "NEGATIVAN",
+        "Odricni odgovori na testu samoprocene": 0,
+        "Potvrdni odgovori na testu samoprocene": 7
       },
-      "Password": "1312"
-    }
-  },
-  {
-    "Zoki": {
-      "Ime": "Zoran",
-      "Email": "zoranusk@gmail.com",
-      "Prezime": "Uskokovi",
-      "Pol": "M",
-      "Test samoprocene": {
-        "Status brzog testa": "NEGATIVAN",
-        "Datum brzog testa": "2/1/2021 20:44:57",
-        "Potvrdni odgovori": 5,
-        "Odricni odgovori": 2
-      },
-      "Password": "Torlak"
-    },
-    "ZvonkoB12": {
-      "Ime": "Zvonko",
-      "Email": "zvonko@gmail.com",
-      "Prezime": "Simic",
-      "Pol": "M",
-      "Test samoprocene": {
-        "Status brzog testa": "POZITIVAN",
-        "Datum brzog testa": "2/1/2021 15:29:55",
-        "Potvrdni odgovori": 5,
-        "Odricni odgovori": 2
-      },
-      "Password": "Subota13"
-    },
-    "Ceca": {
-      "Ime": "Svetlana",
-      "Email": "cecaStajkic@yahoo.com",
-      "Prezime": "Stajkic",
-      "Pol": "Z",
-      "Test samoprocene": {
-        "Status brzog testa": "NEGATIVAN",
-        "Datum brzog testa": "2/1/2021 13:20:33",
-        "Potvrdni odgovori": 6,
-        "Odricni odgovori": 1
-      },
-      "Password": "1312"
+      "Password": "Cecili"
     }
   }
 ]

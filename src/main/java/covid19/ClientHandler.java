@@ -115,10 +115,20 @@ public class ClientHandler extends Thread {
 
 										JSONObject podaciTestSamoprocene = (JSONObject) podaciIspitanik
 												.get("Test samoprocene");
+																			 
 										if (podaciTestSamoprocene != null) {
 											long vremeSada = izracunajMilisekunde(zapisDatuma(new GregorianCalendar()));
-											long vremeTesta = izracunajMilisekunde(
-													(String) podaciTestSamoprocene.get("Datum brzog testa"));
+											long vremeTesta = 0;
+											
+											String brziTestDatum = (String) podaciTestSamoprocene.get("Datum brzog testa");
+											
+											if (brziTestDatum != null) {
+												vremeTesta = izracunajMilisekunde((String) podaciTestSamoprocene.get("Datum brzog testa"));
+											} else {
+												vremeTesta = izracunajMilisekunde((String) podaciTestSamoprocene.get("Datum PCR testa"));
+											}
+											
+											
 											if ((vremeSada - vremeTesta) > TimeUnit.HOURS.toMillis(24)) {
 
 												testSamoprocene();
@@ -153,23 +163,56 @@ public class ClientHandler extends Thread {
 
 										}
 
-										klijentOutput.println("Mozete izvrsiti uvid u rezultate testa.");
+										klijentOutput.println("Mozete izvrsiti detaljniji uvid u rezultate testa.");
 
 									} else if (unos.equals("2")) {
+										
 										JSONObject podaciTestSamoprocene = (JSONObject) podaciIspitanik
 												.get("Test samoprocene");
+								
+										
 										if (podaciTestSamoprocene != null) {
-											klijentOutput
-													.println("---------------------------------------------------");
-											klijentOutput.println("Rezultati testa samoprocene i brzog testa:");
-											klijentOutput.println("Datum testiranja: "
-													+ podaciTestSamoprocene.get("Datum brzog testa"));
-											klijentOutput.println("Rezultat(status): "
-													+ podaciTestSamoprocene.get("Status brzog testa"));
-											klijentOutput
-													.println("---------------------------------------------------");
+											
+											String brziTest = (String) podaciTestSamoprocene.get("Status brzog testa");
+
+											if (brziTest != null) {
+												klijentOutput
+														.println("---------------------------------------------------");
+												klijentOutput.println("Rezultati testa samoprocene i brzog testa:");
+												klijentOutput.println("Potvrdni odgovori na testu samoprocene: "
+														+ podaciTestSamoprocene
+																.get("Potvrdni odgovori na testu samoprocene"));
+												klijentOutput.println("Odricni odgovori na testu samoprocene: "
+														+ podaciTestSamoprocene
+																.get("Odricni odgovori na testu samoprocene"));
+												klijentOutput.println("Datum testiranja: "
+														+ podaciTestSamoprocene.get("Datum brzog testa"));
+												klijentOutput.println("Rezultat(status): "
+														+ podaciTestSamoprocene.get("Status brzog testa"));
+												klijentOutput
+														.println("---------------------------------------------------");
+											} else {
+												klijentOutput
+														.println("---------------------------------------------------");
+												klijentOutput.println("Rezultati testa samoprocene i PCR testa:");
+												klijentOutput.println("Potvrdni odgovori na testu samoprocene: "
+														+ podaciTestSamoprocene
+																.get("Potvrdni odgovori na testu samoprocene"));
+												klijentOutput.println("Odricni odgovori na testu samoprocene: "
+														+ podaciTestSamoprocene
+																.get("Odricni odgovori na testu samoprocene"));
+												klijentOutput.println("Datum testiranja: "
+														+ podaciTestSamoprocene.get("Datum PCR testa"));
+												klijentOutput.println("Rezultat(status): "
+														+ podaciTestSamoprocene.get("Status PCR testa"));
+												klijentOutput
+														.println("---------------------------------------------------");
+
+											}
+											
 											test = false;
-										}
+											
+										} 
 
 										podaciTestSamoprocene = (JSONObject) podaciIspitanik
 												.get("Test samoprocene-nadzor");
@@ -209,17 +252,28 @@ public class ClientHandler extends Thread {
 						}
 					}
 				}
+				
+				while(!input.equals("3")) {
+					klijentOutput.println("Za odjavu sa sistema posaljite broj 3");
+					input = klijentInput.readLine();
+				}
 			}
 
+			if(input.equals("3")) {
+				klijentOutput.println("Dovidjenja");
+			}
+			
 			fajlUpisivac = new FileWriter("covid19.txt");
 			fajlUpisivac.write(gson.toJson(nizIspitanika));
 			fajlUpisivac.flush();
 
 		} catch (IOException e) {
-			// ovde je pokriveno ako klijent nije napisao ***quit ali je stisnuo iksic,
+			// ovde je pokriveno ako klijent nije napisao 3 ali je stisnuo iksic,
 			// terminate, nestalo struje
-			System.out.println("Klijent je iznenada napustio sistem.");
+
+			System.out.println("Klijent " + podaciIspitanik.get("Ime") + " " + podaciIspitanik.get("Prezime") + " je iznenada napustio sistem.");
 			try {
+				
 				fajlUpisivac = new FileWriter("covid19.txt");
 				fajlUpisivac.write(gson.toJson(nizIspitanika));
 				fajlUpisivac.flush();
@@ -293,8 +347,7 @@ public class ClientHandler extends Thread {
 		}
 		podaciIspitanik.put("Email", email);
 
-		podaciCovid.put(username, podaciIspitanik);
-		nizIspitanika.add(podaciCovid);
+		podaciCovid.put(username, podaciIspitanik);		
 
 		return true;
 	}
@@ -342,32 +395,38 @@ public class ClientHandler extends Thread {
 			brojacPitanja++;
 		}
 
-		Server.podaciAdmin.put("Broj testiranja", ((Long) Server.podaciAdmin.get("Broj testiranja") + 1));
+		Server.podaciAdmin.put("Broj testiranja", ( ((Number) Server.podaciAdmin.get("Broj testiranja")).intValue() + 1));
 
 		if (brojacDa >= 2) {
-			String brziTestStatus = (new Random().nextBoolean()) ? "POZITIVAN" : "NEGATIVAN";
-
-			if (brziTestStatus.equals("POZITIVAN")) {
-				Server.podaciAdmin.put("Broj pozitivnih testova",
-						((Long) Server.podaciAdmin.get("Broj pozitivnih testova") + 1));
-			} else {
-				Server.podaciAdmin.put("Broj negativnih testova",
-						((Long) Server.podaciAdmin.get("Broj negativnih testova") + 1));
+			
+			while (true) {
+				klijentOutput.println();
+				klijentOutput.println("Potrebno je da se testirate. Odaberite test:");
+				klijentOutput.println("1. Brzi test");
+				klijentOutput.println("2. PCR test");
+				klijentOutput.println("3. Brzi i PCR test");
+				klijentOutput.println("Vas izbor:");
+				String unos = klijentInput.readLine();
+				
+				if(unos.equals("1")) {
+					brziTest(brojacPitanja, brojacDa, datum);
+					break;
+				} else if(unos.equals("2")) {
+					PCRTest(brojacPitanja, brojacDa, datum);
+					break;
+				} else if(unos.equals("3")) {
+					brziTest(brojacPitanja, brojacDa, datum);
+					PCRTest(brojacPitanja, brojacDa, datum);
+					break;
+				}
+				
+				klijentOutput.println("Pogresan unos, pokusajte ponovo.");
 			}
-
-			JSONObject brziTest = new JSONObject();
-			brziTest.put("Potvrdni odgovori", brojacDa);
-			brziTest.put("Odricni odgovori", brojacPitanja - brojacDa);
-			brziTest.put("Status brzog testa", brziTestStatus);
-			brziTest.put("Datum brzog testa", zapisDatuma(datum));
-			podaciIspitanik.put("Test samoprocene", brziTest);
-
-			klijentOutput.println();
-			klijentOutput.println("Rezultat brzog testa: " + brziTestStatus);
+			
 
 		} else {
 			Server.podaciAdmin.put("Broj ispitanika pod nadzorom",
-					((Long) Server.podaciAdmin.get("Broj ispitanika pod nadzorom") + 1));
+					( ((Number) Server.podaciAdmin.get("Broj ispitanika pod nadzorom")).intValue() + 1));
 
 			JSONObject testNadzor = new JSONObject();
 			testNadzor.put("Status", "Pod nadzorom");
@@ -379,7 +438,74 @@ public class ClientHandler extends Thread {
 		}
 
 	}
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	public void brziTest(int brojacPitanja, int brojacDa, GregorianCalendar datum) {
+		
+		String brziTestStatus = (new Random().nextBoolean()) ? "POZITIVAN" : "NEGATIVAN";
 
+		if (brziTestStatus.equals("POZITIVAN")) {
+			Server.podaciAdmin.put("Broj pozitivnih testova",
+					( ((Number) Server.podaciAdmin.get("Broj pozitivnih testova")).intValue() + 1));
+		} else {
+			Server.podaciAdmin.put("Broj negativnih testova",
+					( ((Number) Server.podaciAdmin.get("Broj negativnih testova")).intValue() + 1));
+		}
+
+		JSONObject brziTest = new JSONObject();
+		brziTest.put("Potvrdni odgovori na testu samoprocene", brojacDa);
+		brziTest.put("Odricni odgovori na testu samoprocene", brojacPitanja - brojacDa);
+		brziTest.put("Status brzog testa", brziTestStatus);
+		brziTest.put("Datum brzog testa", zapisDatuma(datum));
+		podaciIspitanik.put("Test samoprocene", brziTest);
+
+		klijentOutput.println("\nRezultat brzog testa: " + brziTestStatus);
+	}
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	public void PCRTest(int brojacPitanja, int brojacDa, GregorianCalendar datum) {
+		
+		try {
+			klijentOutput.println("Vas PCR test je na cekanju.");
+			Thread.sleep(5000);
+			
+			String pcrTestStatus = (new Random().nextBoolean()) ? "POZITIVAN" : "NEGATIVAN";
+			
+			klijentOutput.println("\nVas PCR test je u obradi...");
+			Thread.sleep(5000);
+			
+			if (pcrTestStatus.equals("POZITIVAN")) {
+				Server.podaciAdmin.put("Broj pozitivnih testova",
+						( ((Number) Server.podaciAdmin.get("Broj pozitivnih testova")).intValue() + 1));
+			} else {
+				Server.podaciAdmin.put("Broj negativnih testova",
+						( ((Number) Server.podaciAdmin.get("Broj negativnih testova")).intValue() + 1));
+			}
+			
+			klijentOutput.println("\nVas PCR test je gotov i uskoro cete dobiti rezultate");
+			Thread.sleep(5000);
+			
+			JSONObject pcrTest = new JSONObject();
+			pcrTest.put("Potvrdni odgovori na testu samoprocene", brojacDa);
+			pcrTest.put("Odricni odgovori na testu samoprocene", brojacPitanja - brojacDa);
+			pcrTest.put("Status PCR testa", pcrTestStatus);
+			pcrTest.put("Datum PCR testa", zapisDatuma(datum));
+			podaciIspitanik.put("Test samoprocene", pcrTest);
+			
+			klijentOutput.println("\nRezultati PCR testa: " + pcrTestStatus);
+		} catch (InterruptedException e) {
+			System.out.println("GRESKA");
+		}
+		
+		
+	}
+
+	
+	
 	public String zapisDatuma(GregorianCalendar datum) {
 
 		int godina = datum.get(GregorianCalendar.YEAR);
@@ -392,6 +518,8 @@ public class ClientHandler extends Thread {
 		return (dan + "/" + (mesec + 1) + "/" + godina + " " + sat + ":" + minut + ":" + sekund);
 	}
 
+	
+	
 	public long izracunajMilisekunde(String datum) {
 
 		DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
@@ -400,6 +528,8 @@ public class ClientHandler extends Thread {
 		return milisekunde;
 	}
 
+	
+	
 	private void adminPanel() {
 		
 		klijentOutput.println();

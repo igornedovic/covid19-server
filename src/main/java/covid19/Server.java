@@ -30,15 +30,10 @@ public class Server {
 			serverSoket = new ServerSocket(port);
 			File fajl = new File("covid19.txt");
 			
-			if(fajl.exists()) {
-				parser = new JSONParser();
-				reader = new FileReader(fajl);
-				Object obj = parser.parse(reader);
-				nizIspitanika = (JSONArray) obj;
-			} 
-			
+			if(!fajl.exists()) {
+				podaciAdmin = new JSONObject();
+				podaciCovidAdmin = new JSONObject();
 				
-			if(nizIspitanika.isEmpty()) {
 				podaciAdmin.put("Password", "admin");
 				podaciAdmin.put("Broj testiranja", 0);
 				podaciAdmin.put("Broj pozitivnih testova", 0);
@@ -46,12 +41,18 @@ public class Server {
 				podaciAdmin.put("Broj ispitanika pod nadzorom", 0);
 				podaciCovidAdmin.put("admin", podaciAdmin);
 				nizIspitanika.add(podaciCovidAdmin);
+				
 			} else {
+				parser = new JSONParser();
+				reader = new FileReader(fajl);
+				Object obj = parser.parse(reader);
+				nizIspitanika = (JSONArray) obj;
+				
 				podaciCovidAdmin = (JSONObject) nizIspitanika.get(0);
 				podaciAdmin = (JSONObject) podaciCovidAdmin.get("admin");
 			}
 			
-			
+	
 			while(true) {
 				System.out.println("Cekam na konekciju...");
 				soketZaKomunikaciju = serverSoket.accept();
