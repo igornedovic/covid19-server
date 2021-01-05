@@ -25,6 +25,8 @@ public class ClientHandler extends Thread {
 	PrintStream klijentOutput;
 	JSONObject podaciIspitanik;
 	JSONObject podaciCovid;
+	JSONObject brziTest;
+	JSONObject pcrTest;
 	Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	String username;
 
@@ -110,6 +112,7 @@ public class ClientHandler extends Thread {
 									klijentOutput.println("2. Rezultati testa");
 									klijentOutput.println("Vas izbor:");
 									String unos = klijentInput.readLine();
+								
 
 									if (unos.equals("1")) {
 
@@ -139,9 +142,9 @@ public class ClientHandler extends Thread {
 																+ " Mozete pregledati rezultate prethodnog testa.");
 												continue;
 											}
-										} else if (podaciIspitanik.get("Test samoprocene-nadzor") != null) {
+										} else if (podaciIspitanik.get("Test samoprocene - Nadzor") != null) {
 											podaciTestSamoprocene = (JSONObject) podaciIspitanik
-													.get("Test samoprocene-nadzor");
+													.get("Test samoprocene - Nadzor");
 											long vremeSada = izracunajMilisekunde(zapisDatuma(new GregorianCalendar()));
 											long vremeTesta = izracunajMilisekunde(
 													(String) podaciTestSamoprocene.get("Datum testa samoprocene"));
@@ -160,6 +163,7 @@ public class ClientHandler extends Thread {
 										} else {
 
 											testSamoprocene();
+											System.out.println("PROVERA3");
 
 										}
 
@@ -215,7 +219,7 @@ public class ClientHandler extends Thread {
 										} 
 
 										podaciTestSamoprocene = (JSONObject) podaciIspitanik
-												.get("Test samoprocene-nadzor");
+												.get("Test samoprocene - Nadzor");
 										if (podaciTestSamoprocene != null) {
 											klijentOutput
 													.println("---------------------------------------------------");
@@ -231,9 +235,13 @@ public class ClientHandler extends Thread {
 											klijentOutput.println(
 													"U bazi ne postoje rezultati sa Vasim kredencijalima. Pristupite testu samoprocene.");
 										}
+										
+										
 									} else {
 										klijentOutput.println("Pogresan unos, pokusajte ponovo.");
 									}
+									
+									
 								}
 								break;
 							}
@@ -270,8 +278,12 @@ public class ClientHandler extends Thread {
 		} catch (IOException e) {
 			// ovde je pokriveno ako klijent nije napisao 3 ali je stisnuo iksic,
 			// terminate, nestalo struje
-
-			System.out.println("Klijent " + podaciIspitanik.get("Ime") + " " + podaciIspitanik.get("Prezime") + " je iznenada napustio sistem.");
+			if(podaciIspitanik.get("Ime") != null) {
+				System.out.println("Klijent " + podaciIspitanik.get("Ime") + " " + podaciIspitanik.get("Prezime") + " je iznenada napustio sistem.");
+			} else {
+				System.out.println("Nepoznati klijent je iznenada napustio sistem.");
+			}
+				
 			try {
 				
 				fajlUpisivac = new FileWriter("covid19.txt");
@@ -431,11 +443,13 @@ public class ClientHandler extends Thread {
 			JSONObject testNadzor = new JSONObject();
 			testNadzor.put("Status", "Pod nadzorom");
 			testNadzor.put("Datum testa samoprocene", zapisDatuma(datum));
-			podaciIspitanik.put("Test samoprocene-nadzor", testNadzor);
+			podaciIspitanik.put("Test samoprocene - Nadzor", testNadzor);
 			klijentOutput.println("Pod nadzorom ste. Potrebno je da ponovite test samoprocene u roku od 20 dana.");
 			klijentOutput.println();
 
 		}
+		
+		
 
 	}
 	
@@ -454,7 +468,7 @@ public class ClientHandler extends Thread {
 					( ((Number) Server.podaciAdmin.get("Broj negativnih testova")).intValue() + 1));
 		}
 
-		JSONObject brziTest = new JSONObject();
+		brziTest = new JSONObject();
 		brziTest.put("Potvrdni odgovori na testu samoprocene", brojacDa);
 		brziTest.put("Odricni odgovori na testu samoprocene", brojacPitanja - brojacDa);
 		brziTest.put("Status brzog testa", brziTestStatus);
@@ -471,12 +485,12 @@ public class ClientHandler extends Thread {
 		
 		try {
 			klijentOutput.println("Vas PCR test je na cekanju.");
-			Thread.sleep(5000);
-			
+			Thread.sleep(2000);
+	
 			String pcrTestStatus = (new Random().nextBoolean()) ? "POZITIVAN" : "NEGATIVAN";
 			
 			klijentOutput.println("\nVas PCR test je u obradi...");
-			Thread.sleep(5000);
+			Thread.sleep(2000);
 			
 			if (pcrTestStatus.equals("POZITIVAN")) {
 				Server.podaciAdmin.put("Broj pozitivnih testova",
@@ -487,14 +501,28 @@ public class ClientHandler extends Thread {
 			}
 			
 			klijentOutput.println("\nVas PCR test je gotov i uskoro cete dobiti rezultate");
-			Thread.sleep(5000);
+			Thread.sleep(2000);
 			
-			JSONObject pcrTest = new JSONObject();
-			pcrTest.put("Potvrdni odgovori na testu samoprocene", brojacDa);
-			pcrTest.put("Odricni odgovori na testu samoprocene", brojacPitanja - brojacDa);
-			pcrTest.put("Status PCR testa", pcrTestStatus);
-			pcrTest.put("Datum PCR testa", zapisDatuma(datum));
-			podaciIspitanik.put("Test samoprocene", pcrTest);
+			pcrTest = new JSONObject();
+
+			if (podaciIspitanik.get("Test samoprocene") == null) {
+				pcrTest.put("Potvrdni odgovori na testu samoprocene", brojacDa);
+				pcrTest.put("Odricni odgovori na testu samoprocene", brojacPitanja - brojacDa);
+				pcrTest.put("Status PCR testa", pcrTestStatus);
+				pcrTest.put("Datum PCR testa", zapisDatuma(datum));
+				podaciIspitanik.put("Test samoprocene", pcrTest);
+			} else {
+				// za slucaj da se rade i brzi i PCR test
+				
+				pcrTest.put("Status PCR testa", pcrTestStatus);
+				pcrTest.put("Datum PCR testa", zapisDatuma(datum));
+				
+				JSONObject brziIPcr = new JSONObject();
+				brziIPcr.put("Brzi test", brziTest);
+				brziIPcr.put("PCR test", pcrTest);
+				
+				podaciIspitanik.put("Test samoprocene", brziIPcr);
+			}
 			
 			klijentOutput.println("\nRezultati PCR testa: " + pcrTestStatus);
 		} catch (InterruptedException e) {

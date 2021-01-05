@@ -1,74 +1,30 @@
 [
   {
-    "MireN": {
-      "Ime": "Mirko",
-      "Email": "mirkonikic@gmail.com",
-      "Prezime": "Nikic",
-      "Pol": "M",
-      "Test samoprocene": {
-        "Datum PCR testa": "4/1/2021 20:33:56",
-        "Status PCR testa": "NEGATIVAN",
-        "Odricni odgovori na testu samoprocene": 4,
-        "Potvrdni odgovori na testu samoprocene": 3
-      },
-      "Password": "mire"
-    },
-    "Mr_Igi": {
-      "Ime": "Igor",
-      "Email": "igornedovic@gmail.com",
-      "Prezime": "Nedovic",
-      "Pol": "M",
-      "Test samoprocene": {
-        "Status brzog testa": "POZITIVAN",
-        "Odricni odgovori na testu samoprocene": 2,
-        "Datum brzog testa": "4/1/2021 20:32:6",
-        "Potvrdni odgovori na testu samoprocene": 5
-      },
-      "Password": "kruskica"
-    },
-    "Roko": {
-      "Ime": "Uros",
-      "Email": "rokoleni@gmail.com",
-      "Test samoprocene-nadzor": {
-        "Status": "Pod nadzorom",
-        "Datum testa samoprocene": "4/1/2021 21:41:49"
-      },
-      "Prezime": "Tasic",
-      "Pol": "M",
-      "Password": "Leni"
-    },
-    "Zvonko": {
-      "Ime": "Zvonko",
-      "Email": "zb@gmail.com",
-      "Prezime": "Bogdan",
-      "Pol": "M",
-      "Test samoprocene": {
-        "Datum PCR testa": "4/1/2021 21:39:44",
-        "Status PCR testa": "POZITIVAN",
-        "Odricni odgovori na testu samoprocene": 2,
-        "Potvrdni odgovori na testu samoprocene": 5
-      },
-      "Password": "B13"
-    },
     "admin": {
-      "Broj pozitivnih testova": 3,
-      "Broj ispitanika pod nadzorom": 1,
+      "Broj pozitivnih testova": 0,
+      "Broj ispitanika pod nadzorom": 0,
       "Broj negativnih testova": 2,
       "Password": "admin",
-      "Broj testiranja": 5
+      "Broj testiranja": 1
     },
-    "Ceca": {
-      "Ime": "Svetlana",
-      "Email": "ceca115@yahoo.com",
-      "Prezime": "Simic",
-      "Pol": "Z",
+    "Luka": {
+      "Ime": "Luka",
+      "Email": "luka@gmail.com",
+      "Prezime": "Pesic",
+      "Pol": "M",
       "Test samoprocene": {
-        "Datum PCR testa": "4/1/2021 20:35:40",
-        "Status PCR testa": "NEGATIVAN",
-        "Odricni odgovori na testu samoprocene": 0,
-        "Potvrdni odgovori na testu samoprocene": 7
+        "PCR test": {
+          "Datum PCR testa": "5/1/2021 13:56:9",
+          "Status PCR testa": "NEGATIVAN"
+        },
+        "Brzi test": {
+          "Status brzog testa": "NEGATIVAN",
+          "Odricni odgovori na testu samoprocene": 1,
+          "Datum brzog testa": "5/1/2021 13:56:9",
+          "Potvrdni odgovori na testu samoprocene": 6
+        }
       },
-      "Password": "Cecili"
+      "Password": "Pesic"
     }
   }
 ]
