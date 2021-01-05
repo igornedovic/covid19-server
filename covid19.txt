@@ -1,30 +1,59 @@
 [
   {
-    "admin": {
-      "Broj pozitivnih testova": 0,
-      "Broj ispitanika pod nadzorom": 0,
-      "Broj negativnih testova": 2,
-      "Password": "admin",
-      "Broj testiranja": 1
+    "Slavko": {
+      "Ime": "Slavko",
+      "Test samoprocene - Nadzor": {
+        "Status": "POD NADZOROM",
+        "Datum testa samoprocene": "6/1/2021 0:14:14"
+      },
+      "Email": "ss@yahoo.com",
+      "Prezime": "Simic",
+      "Pol": "M",
+      "Password": "Simic"
     },
-    "Luka": {
-      "Ime": "Luka",
-      "Email": "luka@gmail.com",
-      "Prezime": "Pesic",
+    "MireN": {
+      "Ime": "Mirko",
+      "Email": "miren@gmail.com",
+      "Prezime": "Nikic",
       "Pol": "M",
       "Test samoprocene": {
-        "PCR test": {
-          "Datum PCR testa": "5/1/2021 13:56:9",
-          "Status PCR testa": "NEGATIVAN"
-        },
-        "Brzi test": {
-          "Status brzog testa": "NEGATIVAN",
-          "Odricni odgovori na testu samoprocene": 1,
-          "Datum brzog testa": "5/1/2021 13:56:9",
-          "Potvrdni odgovori na testu samoprocene": 6
-        }
+        "Datum PCR testa": "5/1/2021 23:3:9",
+        "Status PCR testa": "POZITIVAN",
+        "Odricni odgovori na testu samoprocene": 0,
+        "Potvrdni odgovori na testu samoprocene": 7
       },
-      "Password": "Pesic"
+      "Password": "mire"
+    },
+    "Mr_Igi": {
+      "Ime": "Igor",
+      "Email": "igornedovic@gmail.com",
+      "Prezime": "Nedovic",
+      "Pol": "M",
+      "Test samoprocene": {
+        "Status brzog testa": "POZITIVAN",
+        "Odricni odgovori na testu samoprocene": 2,
+        "Datum brzog testa": "5/1/2021 23:0:58",
+        "Potvrdni odgovori na testu samoprocene": 5
+      },
+      "Password": "kruskica"
+    },
+    "admin": {
+      "Broj pozitivnih testova": 2,
+      "Broj ispitanika pod nadzorom": 2,
+      "Broj negativnih testova": 0,
+      "Password": "admin",
+      "Broj testiranja": 4
+    },
+    "Ceca": {
+      "Ime": "Svetlana",
+      "Test samoprocene - Nadzor": {
+        "Status": "Pod nadzorom",
+        "Datum testa samoprocene": "5/1/2021 23:3:5"
+      },
+      "Email": "ceca@gmail.com",
+      "Prezime": "Simic",
+      "Pol": "Z",
+      "Password": "Cecili"
     }
   }
 ]
