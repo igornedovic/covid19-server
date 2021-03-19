@@ -255,7 +255,7 @@ public class ClientHandler extends Thread {
 						brojacPokusaja++;
 						if(brojacPokusaja > 5) {
 							klijentOutput.println("Iskoristili ste sve pokusaje da se prijavite. "
-							+ "Ponovo pristupite sistemu nakon 30 minuta da biste se registrovali.");
+							+ "Ponovo pristupite sistemu nakon odredjenog vremena da biste se registrovali.");
 							return;
 						}
 					}
